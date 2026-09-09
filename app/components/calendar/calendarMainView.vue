@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useSwipe } from "@vueuse/core";
 import {
   addDays,
   addMonths,
@@ -111,6 +112,24 @@ function handleNext() {
     currentDate.value = addDays(currentDate.value, 30);
   }
 }
+
+// Touch navigation: swipe the calendar body left/right to page through the
+// current view. Reuses handleNext/handlePrevious so every view mode (month,
+// week, day, agenda) behaves the same as the header arrows and arrow keys.
+const calendarBody = ref<HTMLElement | null>(null);
+
+useSwipe(calendarBody, {
+  threshold: 60,
+  onSwipeEnd(_e, direction) {
+    // Ignore up/down so vertical scrolling in week/day/agenda still works.
+    if (direction === "left") {
+      handleNext();
+    }
+    else if (direction === "right") {
+      handlePrevious();
+    }
+  },
+});
 
 function handleToday() {
   currentDate.value = getStableDate();
@@ -270,7 +289,10 @@ function getDaysForAgenda(date: Date) {
         @date-change="(newDate) => (currentDate = newDate)"
       />
     </div>
-    <div class="flex flex-1 flex-col min-h-0">
+    <div
+      ref="calendarBody"
+      class="flex flex-1 flex-col min-h-0"
+    >
       <GlobalMonthView
         v-if="view === 'month'"
         :weeks="getWeeksForMonth(currentDate)"
