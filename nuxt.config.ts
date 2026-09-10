@@ -14,6 +14,9 @@ export default defineNuxtConfig({
       // consola log level. See https://github.com/unjs/consola/blob/main/src/constants.ts
       logLevel: "info", // Default log level, can be overridden by NUXT_PUBLIC_LOG_LEVEL env var
       tz: "America/Chicago", // Default timezone, can be overridden by NUXT_PUBLIC_TZ env var
+      // Base URL of a self-hosted budget app to embed on /budget. Empty hides
+      // nothing - the nav entry stays - but the page explains it is unset.
+      budgetUrl: "", // Override with NUXT_PUBLIC_BUDGET_URL
     },
   },
 

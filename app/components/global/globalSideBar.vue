@@ -42,6 +42,14 @@ function isActivePath(path: string) {
       aria-label="Meal Planner"
     />
     <UButton
+      :class="isActivePath('/budget') ? 'text-primary' : 'text-default'"
+      to="/budget"
+      variant="ghost"
+      icon="i-lucide-wallet"
+      size="xl"
+      aria-label="Budget"
+    />
+    <UButton
       :class="isActivePath('/settings') ? 'text-primary' : 'text-default'"
       to="/settings"
       variant="ghost"
