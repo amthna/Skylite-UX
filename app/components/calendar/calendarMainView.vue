@@ -147,10 +147,12 @@ useSwipe(calendarBody, {
 // horizontal swipe navigation above.
 const ZOOM_VIEWS: CalendarView[] = ["month", "week", "day", "agenda"];
 
-// Ratio the finger gap must cross before a zoom fires. Deliberately coarse so
-// a slightly uneven two-finger drag doesn't change the view by accident.
+// Ratio the finger gap must cross before a zoom fires - reciprocal values
+// (1 / 1.3 = 0.769) so spreading and pinching need the same effort.
+// Deliberately coarse, so a slightly uneven two-finger drag doesn't change
+// the view by accident.
 const PINCH_IN_RATIO = 1.3;
-const PINCH_OUT_RATIO = 0.77;
+const PINCH_OUT_RATIO = 1 / PINCH_IN_RATIO;
 
 let pinchStartGap = 0;
 // Latched for the duration of one gesture, so a single pinch moves exactly one
@@ -192,8 +194,6 @@ useEventListener(calendarBody, "touchmove", (e: TouchEvent) => {
   if (e.touches.length !== 2) {
     return;
   }
-  // Keep suppressing page zoom for the whole gesture, even after we've acted.
-  e.preventDefault();
   if (pinchHandled || !pinchStartGap) {
     return;
   }
@@ -206,7 +206,10 @@ useEventListener(calendarBody, "touchmove", (e: TouchEvent) => {
     stepZoom(-1);
     pinchHandled = true;
   }
-}, { passive: false });
+  // Passive: touch-pan-y on the container already prevents the browser from
+  // claiming the pinch, so there is no need to defeat scroll optimisation
+  // with a non-passive listener on the hot touchmove path.
+}, { passive: true });
 
 // touchcancel included: without it an interrupted gesture (an incoming call,
 // the browser stealing focus) would leave multiTouchActive latched on and
