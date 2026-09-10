@@ -7,7 +7,12 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    // Server-only: the API key never reaches the browser.
+    budgetApiUrl: "", // NUXT_BUDGET_API_URL
+    budgetApiKey: "", // NUXT_BUDGET_API_KEY
+    budgetSyncId: "", // NUXT_BUDGET_SYNC_ID
     public: {
+      budgetCategory: "Groceries", // NUXT_PUBLIC_BUDGET_CATEGORY
       skyliteVersion: pkg.version,
       nuxtVersion: pkg.devDependencies.nuxt,
       nuxtUiVersion: pkg.dependencies["@nuxt/ui"],
