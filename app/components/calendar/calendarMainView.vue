@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSwipe } from "@vueuse/core";
+import { useEventListener, useSwipe } from "@vueuse/core";
 import {
   addDays,
   addMonths,
@@ -130,6 +130,71 @@ useSwipe(calendarBody, {
     }
   },
 });
+
+// Pinch to zoom between views, ordered least to most detailed. Spreading two
+// fingers drills in (month -> week -> day -> agenda); pinching backs out.
+// useSwipe ignores anything but a single touch, so this never fights the
+// horizontal swipe navigation above.
+const ZOOM_VIEWS: CalendarView[] = ["month", "week", "day", "agenda"];
+
+// Ratio the finger gap must cross before a zoom fires. Deliberately coarse so
+// a slightly uneven two-finger drag doesn't change the view by accident.
+const PINCH_IN_RATIO = 1.3;
+const PINCH_OUT_RATIO = 0.77;
+
+let pinchStartGap = 0;
+// Latched for the duration of one gesture, so a single pinch moves exactly one
+// level instead of racing through every view as touchmove keeps firing.
+let pinchHandled = false;
+
+function touchGap(touches: TouchList): number {
+  const [a, b] = [touches[0], touches[1]];
+  if (!a || !b) {
+    return 0;
+  }
+  return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+}
+
+function stepZoom(step: number) {
+  const current = ZOOM_VIEWS.indexOf(view.value);
+  if (current === -1) {
+    return;
+  }
+  const target = ZOOM_VIEWS[Math.min(ZOOM_VIEWS.length - 1, Math.max(0, current + step))];
+  if (target && target !== view.value) {
+    view.value = target;
+    emit("viewChange", target);
+  }
+}
+
+useEventListener(calendarBody, "touchstart", (e: TouchEvent) => {
+  if (e.touches.length !== 2) {
+    return;
+  }
+  pinchStartGap = touchGap(e.touches);
+  pinchHandled = false;
+}, { passive: true });
+
+useEventListener(calendarBody, "touchmove", (e: TouchEvent) => {
+  if (e.touches.length !== 2 || pinchHandled || !pinchStartGap) {
+    return;
+  }
+  const ratio = touchGap(e.touches) / pinchStartGap;
+  if (ratio >= PINCH_IN_RATIO) {
+    stepZoom(1);
+    pinchHandled = true;
+  }
+  else if (ratio <= PINCH_OUT_RATIO) {
+    stepZoom(-1);
+    pinchHandled = true;
+  }
+}, { passive: true });
+
+useEventListener(calendarBody, "touchend", (e: TouchEvent) => {
+  if (e.touches.length < 2) {
+    pinchStartGap = 0;
+  }
+}, { passive: true });
 
 function handleToday() {
   currentDate.value = getStableDate();
