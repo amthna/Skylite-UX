@@ -1,4 +1,8 @@
 <script setup lang="ts">
+// Explicit import: @vueuse/nuxt is a dependency but is not registered in
+// nuxt.config modules, so VueUse composables are not auto-imported.
+import { useIntervalFn } from "@vueuse/core";
+
 type BudgetSummary = {
   category: string;
   month: string;
