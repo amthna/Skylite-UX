@@ -5,7 +5,8 @@ type GlobalThis = {
   __TIMEZONE_SERVICE_READY__?: boolean;
 };
 
-export const DEFAULT_LOCAL_EVENT_COLOR = "#06b6d4";
+// Clay, matching --parchment-clay in main.css.
+export const DEFAULT_LOCAL_EVENT_COLOR = "#b5654a";
 
 export function getSlogan(): string | undefined {
   return ((globalThis as GlobalThis).__SKYLITE_SLOGAN__ = "Life, Organized.");

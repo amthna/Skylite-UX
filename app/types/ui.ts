@@ -107,6 +107,26 @@ const FONT_PREFERENCES = [
     label: "Handlee",
     stack: `"Handlee", ${SYSTEM_FONT_STACK}`,
   },
+  {
+    value: "fraunces",
+    label: "Fraunces",
+    stack: `"Fraunces", Georgia, serif`,
+  },
+  {
+    value: "lora",
+    label: "Lora",
+    stack: `"Lora", Georgia, serif`,
+  },
+  {
+    value: "cormorantGaramond",
+    label: "Cormorant Garamond",
+    stack: `"Cormorant Garamond", Georgia, serif`,
+  },
+  {
+    value: "karla",
+    label: "Karla",
+    stack: `"Karla", ${SYSTEM_FONT_STACK}`,
+  },
 ] as const;
 
 export type FontPreference = (typeof FONT_PREFERENCES)[number]["value"];
@@ -153,7 +173,7 @@ export const MAIN_VIEW_OPTIONS: { path: string; label: string }[] = [
 export const defaultClientPreferences: ClientPreferences = {
   colorMode: "system",
   notifications: false,
-  font: "system",
+  font: "fraunces",
   todoSortBy: "date",
   defaultView: "/calendar",
   calendarView: "week",

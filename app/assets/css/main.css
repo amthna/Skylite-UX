@@ -1,23 +1,47 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
+/*
+ * Parchment palette. Derived from Solarized Light's base3 (#fdf6e3),
+ * desaturated and cooled a few degrees so it reads as aged paper rather than
+ * cream. Accents are dye colours - clay, sage, a dusk blue - chosen to stay
+ * distinguishable from one another as event chips, which matters more on a
+ * wall calendar than how they look in isolation.
+ */
 :root {
   --app-font-sans: ui-sans-serif, system-ui, sans-serif;
-  --ui-text-dimmed: var(--ui-color-neutral-400);
-  --ui-text-muted: var(--ui-color-neutral-500);
-  --ui-text-toned: var(--ui-color-neutral-600);
-  --ui-text-default: var(--ui-color-neutral-700);
-  --ui-text-highlighted: var(--ui-color-neutral-900);
-  --ui-text-inverted: #ffffff;
-  --ui-bg-default: #f8fafc;
-  --ui-bg-muted: var(--ui-color-neutral-50);
-  --ui-bg-elevated: #ffffff;
-  --ui-bg-accented: var(--ui-color-neutral-100);
-  --ui-bg-inverted: var(--ui-color-neutral-900);
-  --ui-border-default: var(--ui-color-neutral-200);
-  --ui-border-muted: var(--ui-color-neutral-100);
-  --ui-border-accented: var(--ui-color-neutral-300);
-  --ui-border-inverted: var(--ui-color-neutral-900);
+
+  --parchment-ground: #f6f2e8;
+  --parchment-raised: #fdfbf4;
+  --parchment-sunken: #ece5d6;
+  --parchment-line: #ddd3bd;
+  --parchment-ink: #3f3a31;
+
+  --parchment-clay: #b5654a;
+  --parchment-sage: #7d8c6a;
+  --parchment-dusk: #5b7c8d;
+  --parchment-amber: #c08a2e;
+
+  --ui-text-dimmed: #b3a992;
+  --ui-text-muted: #7d7466;
+  --ui-text-toned: #5f5849;
+  --ui-text-default: #4a4438;
+  --ui-text-highlighted: var(--parchment-ink);
+  --ui-text-inverted: var(--parchment-raised);
+  --ui-bg-default: var(--parchment-ground);
+  --ui-bg-muted: #f1ece0;
+  --ui-bg-elevated: var(--parchment-raised);
+  --ui-bg-accented: var(--parchment-sunken);
+  --ui-bg-inverted: var(--parchment-ink);
+  --ui-border-default: var(--parchment-line);
+  --ui-border-muted: #e8e0cd;
+  --ui-border-accented: #cfc2a6;
+  --ui-border-inverted: var(--parchment-ink);
+  --ui-primary: var(--parchment-clay);
+  --ui-secondary: var(--parchment-dusk);
+  --ui-success: var(--parchment-sage);
+  --ui-warning: var(--parchment-amber);
+  --ui-error: #a8453a;
   --ui-radius: 0.25rem;
 }
 
@@ -26,35 +50,31 @@ body {
   font-family: var(--app-font-sans);
 }
 
+/*
+ * Warm counterpart rather than the stock cold slate - an ink-brown ground so
+ * the app stays recognisably itself after dark instead of turning into a
+ * different product. Accents are lifted for contrast on the darker ground.
+ */
 .dark {
-  --ui-text-dimmed: var(--ui-color-neutral-400);
-  --ui-text-muted: var(--ui-color-neutral-300);
-  --ui-text-toned: var(--ui-color-neutral-200);
-  --ui-text-default: #ffffff;
-  --ui-text-highlighted: #ffffff;
-  --ui-text-inverted: #ffffff;
-  --ui-bg-default: var(--color-slate-900);
-  --ui-bg-muted: var(--color-slate-800);
-  --ui-bg-elevated: var(--color-slate-700);
-  --ui-bg-accented: var(--color-slate-600);
-  --ui-bg-inverted: var(--color-slate-500);
-  --ui-border-default: var(--ui-color-neutral-800);
-  --ui-border-muted: var(--ui-color-neutral-800);
-  --ui-border-accented: var(--ui-color-neutral-700);
-  --ui-border-inverted: var(--ui-color-neutral-800);
+  --ui-text-dimmed: #7a7365;
+  --ui-text-muted: #a49b88;
+  --ui-text-toned: #c4baa5;
+  --ui-text-default: #e6dfcf;
+  --ui-text-highlighted: #f4efe2;
+  --ui-text-inverted: #23201b;
+  --ui-bg-default: #23201b;
+  --ui-bg-muted: #2b2721;
+  --ui-bg-elevated: #332e27;
+  --ui-bg-accented: #3d372e;
+  --ui-bg-inverted: #ede7d8;
+  --ui-border-default: #3d372e;
+  --ui-border-muted: #332e27;
+  --ui-border-accented: #4d453a;
+  --ui-border-inverted: #ede7d8;
+  --ui-primary: #cd7d5f;
+  --ui-secondary: #7c9dae;
+  --ui-success: #97a683;
+  --ui-warning: #d6a252;
+  --ui-error: #c4635a;
   --ui-radius: 0.25rem;
-}
-
-:root {
-  --color-slate-50: #f4f6fb;
-  --color-slate-100: #e8edf7;
-  --color-slate-200: #cad4ec;
-  --color-slate-300: #9db0dc;
-  --color-slate-400: #6985c9;
-  --color-slate-500: #0f172a;
-  --color-slate-600: #3a5bac;
-  --color-slate-700: #27407c;
-  --color-slate-800: #1d2f58;
-  --color-slate-900: #141f38;
-  --color-slate-950: #0d1526;
 }

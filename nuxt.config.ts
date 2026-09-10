@@ -69,6 +69,26 @@ export default defineNuxtConfig({
         provider: "google",
         global: true,
       },
+      {
+        name: "Fraunces",
+        provider: "google",
+        global: true,
+      },
+      {
+        name: "Lora",
+        provider: "google",
+        global: true,
+      },
+      {
+        name: "Cormorant Garamond",
+        provider: "google",
+        global: true,
+      },
+      {
+        name: "Karla",
+        provider: "google",
+        global: true,
+      },
     ],
   },
 
