@@ -13,6 +13,10 @@ export default defineNuxtConfig({
     budgetSyncId: "", // NUXT_BUDGET_SYNC_ID
     public: {
       budgetCategory: "Groceries", // NUXT_PUBLIC_BUDGET_CATEGORY
+      // Weather shown in the calendar header. Defaults to Minneapolis.
+      weatherLatitude: "44.9778", // NUXT_PUBLIC_WEATHER_LATITUDE
+      weatherLongitude: "-93.2650", // NUXT_PUBLIC_WEATHER_LONGITUDE
+      weatherUnit: "fahrenheit", // NUXT_PUBLIC_WEATHER_UNIT
       skyliteVersion: pkg.version,
       nuxtVersion: pkg.devDependencies.nuxt,
       nuxtUiVersion: pkg.dependencies["@nuxt/ui"],

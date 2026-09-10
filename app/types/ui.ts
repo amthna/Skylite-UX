@@ -139,7 +139,7 @@ export const NAV_ITEMS: {
   { path: "/toDoLists", label: "Todo Lists", icon: "i-lucide-list-todo" },
   { path: "/shoppingLists", label: "Shopping Lists", icon: "i-lucide-shopping-cart" },
   { path: "/mealPlanner", label: "Meal Planner", icon: "i-lucide-utensils" },
-  { path: "/budget", label: "Budget", icon: "i-lucide-wallet" },
+  { path: "/budget", label: "Budget", icon: "i-lucide-circle-dollar-sign" },
   { path: "/settings", label: "Settings", icon: "i-lucide-settings", alwaysVisible: true },
 ];
 
