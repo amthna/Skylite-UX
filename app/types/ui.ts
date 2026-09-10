@@ -69,7 +69,7 @@ export type GlobalFloatingActionButtonProps = {
   label?: string;
   color?: "primary" | "secondary" | "success" | "warning" | "error";
   size?: "sm" | "md" | "lg";
-  position?: "bottom-right" | "bottom-left" | "top-right" | "top-left";
+  position?: "bottom-right" | "bottom-right-stacked" | "bottom-left" | "top-right" | "top-left";
   disabled?: boolean;
 };
 

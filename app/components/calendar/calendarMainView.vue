@@ -4,8 +4,12 @@ import {
   addDays,
   addMonths,
   addWeeks,
+  endOfWeek,
   format,
+  isSameDay,
   isSameMonth,
+  isWithinInterval,
+  startOfWeek,
   subMonths,
   subWeeks,
 } from "date-fns";
@@ -303,6 +307,33 @@ const isCurrentMonth = computed(() => {
   return isSameMonth(currentDate.value, getStableDate());
 });
 
+/**
+ * Whether today is inside the range the current view is showing. Drives the
+ * jump-to-today button, which only appears once you've navigated away - on a
+ * wall display you are almost always on today, and a permanent button there
+ * would be dead weight next to the add-event action.
+ */
+const isTodayVisible = computed(() => {
+  const today = getStableDate();
+  const shown = currentDate.value;
+  switch (view.value) {
+    case "month":
+      return isSameMonth(shown, today);
+    case "week":
+      return isWithinInterval(today, {
+        start: startOfWeek(shown, { weekStartsOn: 0 }),
+        end: endOfWeek(shown, { weekStartsOn: 0 }),
+      });
+    case "day":
+      return isSameDay(shown, today);
+    case "agenda":
+      // The agenda view pages in 30-day blocks from the current date.
+      return isWithinInterval(today, { start: shown, end: addDays(shown, 30) });
+    default:
+      return true;
+  }
+});
+
 const filteredEvents = computed(() => {
   if (!props.events)
     return [];
@@ -412,6 +443,15 @@ function getDaysForAgenda(date: Date) {
       />
     </div>
   </div>
+  <GlobalFloatingActionButton
+    v-if="!isTodayVisible"
+    icon="i-lucide-calendar-check"
+    label="Jump to today"
+    color="secondary"
+    size="lg"
+    position="bottom-right-stacked"
+    @click="handleToday"
+  />
   <GlobalFloatingActionButton
     icon="i-lucide-plus"
     label="Add new event"

@@ -19,6 +19,9 @@ const positionClasses = computed(() => {
     = "fixed z-50 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl flex items-center justify-center";
 
   switch (props.position) {
+    // Sits one button-height above bottom-right, for a secondary action.
+    case "bottom-right-stacked":
+      return `${baseClasses} bottom-24 right-6`;
     case "bottom-left":
       return `${baseClasses} bottom-6 left-6`;
     case "top-right":
