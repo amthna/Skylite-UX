@@ -2,7 +2,7 @@ name: Build and publish fork image
 
 on:
   push:
-    branches: [main, swipe-navigation]
+    branches: [dev, swipe-navigation]
   workflow_dispatch:
 
 jobs:
