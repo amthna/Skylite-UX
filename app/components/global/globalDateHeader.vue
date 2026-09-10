@@ -83,34 +83,8 @@ const todoSortLabel = computed(() =>
 
 <template>
   <div
-    class="flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+    class="flex flex-row items-center justify-between gap-4"
     :class="className"
-  >
-    <div class="flex sm:flex-col max-sm:items-center justify-between gap-1.5">
-      <div class="flex items-center gap-1.5">
-        <h1 class="font-semibold text-xl text-highlighted">
-          <NuxtTime
-            :datetime="now"
-            hour="numeric"
-            minute="2-digit"
-            :hour12="true"
-          />
-        </h1>
-      </div>
-      <div class="text-sm text-muted">
-        <NuxtTime
-          :datetime="now"
-          weekday="long"
-          month="long"
-          day="numeric"
-        />
-      </div>
-    </div>
-  </div>
-
-  <div
-    v-if="showNavigation || showTodoSortSelector"
-    class="flex items-center justify-between gap-2"
   >
     <h2 v-if="showNavigation" class="font-semibold text-3xl text-highlighted">
       <NuxtTime
@@ -165,20 +139,40 @@ const todoSortLabel = computed(() =>
         year="numeric"
       />
     </h2>
-    <div
-      v-if="showTodoSortSelector"
-      class="flex items-center justify-between gap-2"
-    >
-      <UDropdownMenu :items="todoSortItems">
-        <UButton
-          color="neutral"
-          variant="outline"
-          size="xl"
-          trailing-icon="i-lucide-chevron-down"
-        >
-          {{ todoSortLabel }}
-        </UButton>
-      </UDropdownMenu>
+    <div class="flex items-center gap-4 ml-auto">
+      <div class="flex flex-col items-end gap-0.5">
+        <h1 class="font-semibold text-xl text-highlighted">
+          <NuxtTime
+            :datetime="now"
+            hour="numeric"
+            minute="2-digit"
+            :hour12="true"
+          />
+        </h1>
+        <div class="text-sm text-muted">
+          <NuxtTime
+            :datetime="now"
+            weekday="long"
+            month="long"
+            day="numeric"
+          />
+        </div>
+      </div>
+      <div
+        v-if="showTodoSortSelector"
+        class="flex items-center justify-between gap-2"
+      >
+        <UDropdownMenu :items="todoSortItems">
+          <UButton
+            color="neutral"
+            variant="outline"
+            size="xl"
+            trailing-icon="i-lucide-chevron-down"
+          >
+            {{ todoSortLabel }}
+          </UButton>
+        </UDropdownMenu>
+      </div>
     </div>
   </div>
 </template>
