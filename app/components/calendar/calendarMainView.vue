@@ -118,9 +118,19 @@ function handleNext() {
 // week, day, agenda) behaves the same as the header arrows and arrow keys.
 const calendarBody = ref<HTMLElement | null>(null);
 
+// True from the moment a second finger lands until every finger is lifted.
+// A pinch necessarily passes through one-finger states - most obviously when
+// you lift one finger first - and useSwipe only tracks single touches, so
+// without this a pinch reliably ends by firing a spurious swipe.
+let multiTouchActive = false;
+
 useSwipe(calendarBody, {
   threshold: 60,
   onSwipeEnd(_e, direction) {
+    // Never page the view off the tail of a pinch.
+    if (multiTouchActive) {
+      return;
+    }
     // Ignore up/down so vertical scrolling in week/day/agenda still works.
     if (direction === "left") {
       handleNext();
@@ -173,6 +183,7 @@ useEventListener(calendarBody, "touchstart", (e: TouchEvent) => {
   }
   // Non-passive so preventDefault actually suppresses Silk's page zoom.
   e.preventDefault();
+  multiTouchActive = true;
   pinchStartGap = touchGap(e.touches);
   pinchHandled = false;
 }, { passive: false });
@@ -197,9 +208,15 @@ useEventListener(calendarBody, "touchmove", (e: TouchEvent) => {
   }
 }, { passive: false });
 
-useEventListener(calendarBody, "touchend", (e: TouchEvent) => {
+// touchcancel included: without it an interrupted gesture (an incoming call,
+// the browser stealing focus) would leave multiTouchActive latched on and
+// silently kill swipe navigation until the next clean pinch.
+useEventListener(calendarBody, ["touchend", "touchcancel"], (e: TouchEvent) => {
   if (e.touches.length < 2) {
     pinchStartGap = 0;
+  }
+  if (e.touches.length === 0) {
+    multiTouchActive = false;
   }
 }, { passive: true });
 
