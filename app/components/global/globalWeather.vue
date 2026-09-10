@@ -21,39 +21,39 @@ useIntervalFn(() => refresh(), 10 * 60 * 1000);
  * WMO weather codes, grouped to the granularity a glance actually resolves.
  * https://open-meteo.com/en/docs
  */
-function describe(code: number, isDay: boolean): { icon: string; label: string } {
+function describe(code: number, isDay: boolean): { icon: string; label: string; color: string } {
   if (code === 0) {
     return isDay
-      ? { icon: "i-lucide-sun", label: "Clear" }
-      : { icon: "i-lucide-moon", label: "Clear" };
+      ? { icon: "i-lucide-sun", label: "Clear", color: "text-amber-400" }
+      : { icon: "i-lucide-moon", label: "Clear", color: "text-slate-400" };
   }
   if (code <= 2) {
     return isDay
-      ? { icon: "i-lucide-cloud-sun", label: "Partly cloudy" }
-      : { icon: "i-lucide-cloud-moon", label: "Partly cloudy" };
+      ? { icon: "i-lucide-cloud-sun", label: "Partly cloudy", color: "text-amber-400" }
+      : { icon: "i-lucide-cloud-moon", label: "Partly cloudy", color: "text-slate-400" };
   }
   if (code === 3) {
-    return { icon: "i-lucide-cloud", label: "Overcast" };
+    return { icon: "i-lucide-cloud", label: "Overcast", color: "text-slate-400" };
   }
   if (code <= 48) {
-    return { icon: "i-lucide-cloud-fog", label: "Fog" };
+    return { icon: "i-lucide-cloud-fog", label: "Fog", color: "text-slate-400" };
   }
   if (code <= 57) {
-    return { icon: "i-lucide-cloud-drizzle", label: "Drizzle" };
+    return { icon: "i-lucide-cloud-drizzle", label: "Drizzle", color: "text-sky-500" };
   }
   if (code <= 67) {
-    return { icon: "i-lucide-cloud-rain", label: "Rain" };
+    return { icon: "i-lucide-cloud-rain", label: "Rain", color: "text-blue-500" };
   }
   if (code <= 77) {
-    return { icon: "i-lucide-snowflake", label: "Snow" };
+    return { icon: "i-lucide-snowflake", label: "Snow", color: "text-cyan-400" };
   }
   if (code <= 82) {
-    return { icon: "i-lucide-cloud-rain-wind", label: "Showers" };
+    return { icon: "i-lucide-cloud-rain-wind", label: "Showers", color: "text-blue-500" };
   }
   if (code <= 86) {
-    return { icon: "i-lucide-cloud-snow", label: "Snow showers" };
+    return { icon: "i-lucide-cloud-snow", label: "Snow showers", color: "text-cyan-400" };
   }
-  return { icon: "i-lucide-cloud-lightning", label: "Thunderstorm" };
+  return { icon: "i-lucide-cloud-lightning", label: "Thunderstorm", color: "text-violet-500" };
 }
 
 const conditions = computed(() =>
@@ -62,16 +62,23 @@ const conditions = computed(() =>
 </script>
 
 <template>
-  <div v-if="data && conditions" class="flex items-center gap-3">
-    <UIcon :name="conditions.icon" class="w-9 h-9 text-(--ui-primary)" />
+  <div
+    v-if="data && conditions"
+    class="flex items-center gap-3"
+    :title="conditions.label"
+  >
+    <UIcon
+      :name="conditions.icon"
+      class="w-9 h-9"
+      :class="conditions.color"
+    />
     <div class="flex flex-col leading-tight">
       <span class="font-semibold text-xl text-highlighted tabular-nums">
         {{ data.temperature }}&deg;
       </span>
       <span class="text-sm text-muted tabular-nums">
-        feels {{ data.feelsLike }}&deg;
+        feels like {{ data.feelsLike }}&deg;
       </span>
     </div>
-    <span class="text-sm text-muted hidden lg:inline">{{ conditions.label }}</span>
   </div>
 </template>
