@@ -11,7 +11,6 @@ import { TODO_SORT_OPTIONS } from "~/types/ui";
 
 const props = defineProps<{
   showNavigation?: boolean;
-  showViewSelector?: boolean;
   showTodoSortSelector?: boolean;
   currentDate?: Date;
   view?: CalendarView;
@@ -20,11 +19,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "previous"): void;
-  (e: "next"): void;
-  (e: "today"): void;
-  (e: "viewChange", view: CalendarView): void;
-  (e: "dateChange", date: Date): void;
   (e: "todoSortChange", mode: TodoSortMode): void;
 }>();
 
@@ -75,34 +69,6 @@ const viewTitle = computed(() => {
   return "month";
 });
 
-const items: DropdownMenuItem[][] = [
-  [
-    {
-      label: "Month",
-      icon: "i-lucide-calendar-days",
-      onSelect: () => emit("viewChange", "month"),
-    },
-    {
-      label: "Week",
-      icon: "i-lucide-calendar-range",
-      onSelect: () => {
-        emit("viewChange", "week");
-        emit("dateChange", getStableDate());
-      },
-    },
-    {
-      label: "Day",
-      icon: "i-lucide-calendar-1",
-      onSelect: () => emit("viewChange", "day"),
-    },
-    {
-      label: "Agenda",
-      icon: "i-lucide-list",
-      onSelect: () => emit("viewChange", "agenda"),
-    },
-  ],
-];
-
 const todoSortItems: DropdownMenuItem[][] = [
   TODO_SORT_OPTIONS.map(opt => ({
     label: opt.label,
@@ -113,18 +79,6 @@ const todoSortItems: DropdownMenuItem[][] = [
 const todoSortLabel = computed(() =>
   TODO_SORT_OPTIONS.find(o => o.value === (props.todoSortBy ?? "date"))?.label ?? "Date",
 );
-
-function handlePrevious() {
-  emit("previous");
-}
-
-function handleNext() {
-  emit("next");
-}
-
-function handleToday() {
-  emit("today");
-}
 </script>
 
 <template>
@@ -152,127 +106,79 @@ function handleToday() {
         />
       </div>
     </div>
+  </div>
 
-    <div v-if="showNavigation" class="flex items-center justify-center flex-1">
-      <h2 class="font-semibold text-lg text-highlighted">
+  <div
+    v-if="showNavigation || showTodoSortSelector"
+    class="flex items-center justify-between gap-2"
+  >
+    <h2 v-if="showNavigation" class="font-semibold text-3xl text-highlighted">
+      <NuxtTime
+        v-if="viewTitle === 'month'"
+        :datetime="currentDate"
+        month="long"
+        year="numeric"
+      />
+      <NuxtTime
+        v-else-if="viewTitle === 'week-same-month'"
+        :datetime="startOfWeek(currentDate, { weekStartsOn: 0 })"
+        month="long"
+        year="numeric"
+      />
+      <span v-else-if="viewTitle === 'week-different-months'">
         <NuxtTime
-          v-if="viewTitle === 'month'"
-          :datetime="currentDate"
-          month="long"
-          year="numeric"
-        />
-        <NuxtTime
-          v-else-if="viewTitle === 'week-same-month'"
           :datetime="startOfWeek(currentDate, { weekStartsOn: 0 })"
-          month="long"
-          year="numeric"
+          month="short"
         />
-        <span v-else-if="viewTitle === 'week-different-months'">
-          <NuxtTime
-            :datetime="startOfWeek(currentDate, { weekStartsOn: 0 })"
-            month="short"
-          />
-          -
-          <NuxtTime
-            :datetime="endOfWeek(currentDate, { weekStartsOn: 0 })"
-            month="short"
-            year="numeric"
-          />
-        </span>
+        -
         <NuxtTime
-          v-else-if="viewTitle === 'day'"
-          :datetime="currentDate"
-          month="long"
-          day="numeric"
+          :datetime="endOfWeek(currentDate, { weekStartsOn: 0 })"
+          month="short"
           year="numeric"
         />
+      </span>
+      <NuxtTime
+        v-else-if="viewTitle === 'day'"
+        :datetime="currentDate"
+        month="long"
+        day="numeric"
+        year="numeric"
+      />
+      <NuxtTime
+        v-else-if="viewTitle === 'agenda-same-month'"
+        :datetime="currentDate"
+        month="long"
+        year="numeric"
+      />
+      <span v-else-if="viewTitle === 'agenda-different-months'">
+        <NuxtTime :datetime="currentDate" month="short" /> -
         <NuxtTime
-          v-else-if="viewTitle === 'agenda-same-month'"
-          :datetime="currentDate"
-          month="long"
+          :datetime="addDays(currentDate, 30 - 1)"
+          month="short"
           year="numeric"
         />
-        <span v-else-if="viewTitle === 'agenda-different-months'">
-          <NuxtTime :datetime="currentDate" month="short" /> -
-          <NuxtTime
-            :datetime="addDays(currentDate, 30 - 1)"
-            month="short"
-            year="numeric"
-          />
-        </span>
-        <NuxtTime
-          v-else
-          :datetime="currentDate"
-          month="long"
-          year="numeric"
-        />
-      </h2>
-    </div>
-
+      </span>
+      <NuxtTime
+        v-else
+        :datetime="currentDate"
+        month="long"
+        year="numeric"
+      />
+    </h2>
     <div
-      v-if="showNavigation || showTodoSortSelector"
+      v-if="showTodoSortSelector"
       class="flex items-center justify-between gap-2"
     >
-      <div
-        v-if="showNavigation"
-        class="flex items-center justify-between gap-2"
-      >
-        <div class="flex items-center sm:gap-2 max-sm:order-1">
-          <UButton
-            icon="i-lucide-chevron-left"
-            color="neutral"
-            variant="ghost"
-            size="xl"
-            aria-label="Previous"
-            @click="handlePrevious"
-          />
-          <UButton
-            icon="i-lucide-chevron-right"
-            color="neutral"
-            variant="ghost"
-            size="xl"
-            aria-label="Next"
-            @click="handleNext"
-          />
-        </div>
+      <UDropdownMenu :items="todoSortItems">
         <UButton
-          color="primary"
+          color="neutral"
+          variant="outline"
           size="xl"
-          @click="handleToday"
+          trailing-icon="i-lucide-chevron-down"
         >
-          Today
+          {{ todoSortLabel }}
         </UButton>
-      </div>
-      <div
-        v-if="showViewSelector"
-        class="flex items-center justify-between gap-2"
-      >
-        <UDropdownMenu :items="items">
-          <UButton
-            color="neutral"
-            variant="outline"
-            size="xl"
-            trailing-icon="i-lucide-chevron-down"
-          >
-            <span class="capitalize">{{ view }}</span>
-          </UButton>
-        </UDropdownMenu>
-      </div>
-      <div
-        v-if="showTodoSortSelector"
-        class="flex items-center justify-between gap-2"
-      >
-        <UDropdownMenu :items="todoSortItems">
-          <UButton
-            color="neutral"
-            variant="outline"
-            size="xl"
-            trailing-icon="i-lucide-chevron-down"
-          >
-            {{ todoSortLabel }}
-          </UButton>
-        </UDropdownMenu>
-      </div>
+      </UDropdownMenu>
     </div>
   </div>
 </template>

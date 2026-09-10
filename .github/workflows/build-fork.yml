@@ -2,7 +2,7 @@ name: Build and publish fork image
 
 on:
   push:
-    branches: [dev, swipe-navigation, pinch-zoom-views, budget-iframe, budget-widgets]
+    branches: [dev, swipe-navigation, pinch-zoom-views, budget-iframe, budget-widgets, minimal-header]
   workflow_dispatch:
 
 jobs:

@@ -371,14 +371,8 @@ function getDaysForAgenda(date: Date) {
     >
       <GlobalDateHeader
         :show-navigation="true"
-        :show-view-selector="true"
         :current-date="currentDate"
         :view="view"
-        @previous="handlePrevious"
-        @next="handleNext"
-        @today="handleToday"
-        @view-change="(newView) => { view = newView; emit('viewChange', newView); }"
-        @date-change="(newDate) => (currentDate = newDate)"
       />
     </div>
     <div
