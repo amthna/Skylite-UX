@@ -6,7 +6,8 @@
  * desaturated and cooled a few degrees so it reads as aged paper rather than
  * cream. Accents are dye colours - clay, sage, a dusk blue - chosen to stay
  * distinguishable from one another as event chips, which matters more on a
- * wall calendar than how they look in isolation.
+ * wall calendar than how they look in isolation. Each is dark enough that
+ * white chip text clears WCAG AA (4.5:1) against it.
  */
 :root {
   --app-font-sans: ui-sans-serif, system-ui, sans-serif;
@@ -17,10 +18,10 @@
   --parchment-line: #ddd3bd;
   --parchment-ink: #3f3a31;
 
-  --parchment-clay: #b5654a;
-  --parchment-sage: #7d8c6a;
-  --parchment-dusk: #5b7c8d;
-  --parchment-amber: #c08a2e;
+  --parchment-clay: #9d5340;
+  --parchment-sage: #667554;
+  --parchment-dusk: #4a6a7a;
+  --parchment-amber: #96681d;
 
   --ui-text-dimmed: #b3a992;
   --ui-text-muted: #7d7466;

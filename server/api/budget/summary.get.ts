@@ -14,10 +14,9 @@ type ActualMonth = {
   };
 };
 
-/** Actual stores money in cents; negative `spent` means money went out. */
+/** Actual stores money in cents, with `spent` negative for money going out. */
 function centsSpent(month: ActualMonth, categoryName: string): number | null {
-  const groups = month?.data?.categoryGroups ?? [];
-  for (const group of groups) {
+  for (const group of month?.data?.categoryGroups ?? []) {
     for (const category of group.categories ?? []) {
       if (category.name.toLowerCase() === categoryName.toLowerCase()) {
         return Math.abs(category.spent ?? 0);
@@ -36,13 +35,16 @@ export default defineEventHandler(async () => {
   const baseUrl = config.budgetApiUrl as string;
   const apiKey = config.budgetApiKey as string;
   const syncId = config.budgetSyncId as string;
-  const categoryName = config.public.budgetCategory as string;
 
-  if (!baseUrl || !apiKey || !syncId) {
-    throw createError({
-      statusCode: 503,
-      message: "Budget API is not configured",
-    });
+  // Comma-separated, so the tracked categories are deployment config rather
+  // than something baked into the build.
+  const categoryNames = String(config.public.budgetCategory ?? "")
+    .split(",")
+    .map(name => name.trim())
+    .filter(Boolean);
+
+  if (!baseUrl || !apiKey || !syncId || categoryNames.length === 0) {
+    throw createError({ statusCode: 503, message: "Budget API is not configured" });
   }
 
   const now = new Date();
@@ -57,36 +59,49 @@ export default defineEventHandler(async () => {
   }
 
   try {
-    // Sequential rather than parallel: the wrapper opens the budget file per
-    // request, and hammering it with concurrent calls is slower, not faster.
+    // Sequential: the wrapper opens the budget file per request, so concurrent
+    // calls are slower rather than faster.
     const current = await fetchMonth(thisMonth);
     const previous = await fetchMonth(lastMonth);
 
-    const spentThisMonth = centsSpent(current, categoryName);
-    const spentLastMonth = centsSpent(previous, categoryName);
+    const categories = categoryNames.map(name => ({
+      name,
+      spentThisMonth: centsSpent(current, name) ?? 0,
+      spentLastMonth: centsSpent(previous, name) ?? 0,
+      found: centsSpent(current, name) !== null,
+    }));
 
-    if (spentThisMonth === null) {
+    const missing = categories.filter(c => !c.found).map(c => c.name);
+    if (missing.length === categories.length) {
       throw createError({
         statusCode: 404,
-        message: `Category "${categoryName}" not found in the current budget month`,
+        message: `No matching categories in the current budget month: ${missing.join(", ")}`,
       });
     }
 
-    // Days elapsed including today, so the average reflects a day in progress
-    // rather than dividing by a day that hasn't happened yet.
+    const spentThisMonth = categories.reduce((sum, c) => sum + c.spentThisMonth, 0);
+    const spentLastMonth = categories.reduce((sum, c) => sum + c.spentLastMonth, 0);
+
+    // Days elapsed includes today, so the average reflects a day in progress
+    // rather than dividing by one that hasn't happened.
     const daysElapsed = now.getDate();
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     const perDay = Math.round(spentThisMonth / daysElapsed);
 
     return {
-      category: categoryName,
+      categories: categories.map(({ name, spentThisMonth: s, spentLastMonth: l }) => ({
+        name,
+        spentThisMonth: s,
+        spentLastMonth: l,
+      })),
+      missing,
       month: thisMonth,
       spentThisMonth,
       spentLastMonth,
       perDay,
       daysElapsed,
       daysInMonth,
-      // Naive run-rate: today's pace held for the rest of the month.
+      // Naive run rate: today's pace held for the rest of the month.
       projected: perDay * daysInMonth,
     };
   }
