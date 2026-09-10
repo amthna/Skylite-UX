@@ -171,12 +171,19 @@ useEventListener(calendarBody, "touchstart", (e: TouchEvent) => {
   if (e.touches.length !== 2) {
     return;
   }
+  // Non-passive so preventDefault actually suppresses Silk's page zoom.
+  e.preventDefault();
   pinchStartGap = touchGap(e.touches);
   pinchHandled = false;
-}, { passive: true });
+}, { passive: false });
 
 useEventListener(calendarBody, "touchmove", (e: TouchEvent) => {
-  if (e.touches.length !== 2 || pinchHandled || !pinchStartGap) {
+  if (e.touches.length !== 2) {
+    return;
+  }
+  // Keep suppressing page zoom for the whole gesture, even after we've acted.
+  e.preventDefault();
+  if (pinchHandled || !pinchStartGap) {
     return;
   }
   const ratio = touchGap(e.touches) / pinchStartGap;
@@ -188,7 +195,7 @@ useEventListener(calendarBody, "touchmove", (e: TouchEvent) => {
     stepZoom(-1);
     pinchHandled = true;
   }
-}, { passive: true });
+}, { passive: false });
 
 useEventListener(calendarBody, "touchend", (e: TouchEvent) => {
   if (e.touches.length < 2) {
@@ -356,7 +363,7 @@ function getDaysForAgenda(date: Date) {
     </div>
     <div
       ref="calendarBody"
-      class="flex flex-1 flex-col min-h-0"
+      class="flex flex-1 flex-col min-h-0 touch-pan-y"
     >
       <GlobalMonthView
         v-if="view === 'month'"
