@@ -1,5 +1,15 @@
 <script setup lang="ts">
+import { NAV_ITEMS } from "~/types/ui";
+
 const route = useRoute();
+const { preferences } = useClientPreferences();
+
+// Settings is pinned: hiding it would leave no way back to re-enable anything.
+const visibleItems = computed(() => {
+  const hidden = preferences.value?.hiddenNavItems ?? [];
+  return NAV_ITEMS.filter(i => i.alwaysVisible || !hidden.includes(i.path));
+});
+
 function isActivePath(path: string) {
   return route.path === path;
 }
@@ -10,52 +20,14 @@ function isActivePath(path: string) {
     class="sticky top-0 left-0 h-[calc(100vh-80px)] w-[50px] bg-default flex flex-col items-center justify-evenly py-4 z-100"
   >
     <UButton
-      :class="isActivePath('/calendar') ? 'text-primary' : 'text-default'"
-      to="/calendar"
+      v-for="item in visibleItems"
+      :key="item.path"
+      :class="isActivePath(item.path) ? 'text-primary' : 'text-default'"
+      :to="item.path"
       variant="ghost"
-      icon="i-lucide-calendar-days"
+      :icon="item.icon"
       size="xl"
-      aria-label="Calendar"
-    />
-    <UButton
-      :class="isActivePath('/toDoLists') ? 'text-primary' : 'text-default'"
-      to="/toDoLists"
-      variant="ghost"
-      icon="i-lucide-list-todo"
-      size="xl"
-      aria-label="Todo Lists"
-    />
-    <UButton
-      :class="isActivePath('/shoppingLists') ? 'text-primary' : 'text-default'"
-      to="/shoppingLists"
-      variant="ghost"
-      icon="i-lucide-shopping-cart"
-      size="xl"
-      aria-label="Shopping Lists"
-    />
-    <UButton
-      :class="isActivePath('/mealplanner') ? 'text-primary' : 'text-default'"
-      to="/mealplanner"
-      variant="ghost"
-      icon="i-lucide-utensils"
-      size="xl"
-      aria-label="Meal Planner"
-    />
-    <UButton
-      :class="isActivePath('/budget') ? 'text-primary' : 'text-default'"
-      to="/budget"
-      variant="ghost"
-      icon="i-lucide-wallet"
-      size="xl"
-      aria-label="Budget"
-    />
-    <UButton
-      :class="isActivePath('/settings') ? 'text-primary' : 'text-default'"
-      to="/settings"
-      variant="ghost"
-      icon="i-lucide-settings"
-      size="xl"
-      aria-label="Settings"
+      :aria-label="item.label"
     />
   </div>
 </template>

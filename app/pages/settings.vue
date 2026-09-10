@@ -19,7 +19,7 @@ import {
   createIntegrationService,
   integrationRegistry,
 } from "~/types/integrations";
-import { FONT_OPTIONS, getFontStack, MAIN_VIEW_OPTIONS } from "~/types/ui";
+import { FONT_OPTIONS, getFontStack, MAIN_VIEW_OPTIONS, NAV_ITEMS } from "~/types/ui";
 
 const { users, loading, error, createUser, deleteUser, updateUser }
   = useUsers();
@@ -74,6 +74,26 @@ const selectedFont = computed({
     updatePreferences({ font: value });
   },
 });
+
+// Nav visibility. Stored as a list of hidden paths so newly added nav items
+// default to visible rather than needing a migration.
+const toggleableNavItems = computed(() => NAV_ITEMS.filter(i => !i.alwaysVisible));
+
+function navItemVisible(path: string) {
+  return computed({
+    get: () => !(preferences.value?.hiddenNavItems ?? []).includes(path),
+    set(value: boolean) {
+      const hidden = new Set(preferences.value?.hiddenNavItems ?? []);
+      if (value) {
+        hidden.delete(path);
+      }
+      else {
+        hidden.add(path);
+      }
+      updatePreferences({ hiddenNavItems: [...hidden] });
+    },
+  });
+}
 
 const selectedDefaultView = computed({
   get: () => preferences.value?.defaultView ?? "/calendar",
@@ -902,6 +922,27 @@ function integrationNeedsReauth(integration?: Integration | null): boolean {
                 size="xl"
                 aria-label="Toggle dark mode"
               />
+            </div>
+            <div v-for="item in toggleableNavItems" :key="item.path">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="font-medium text-highlighted">
+                    Show {{ item.label }}
+                  </p>
+                  <p class="text-sm text-muted">
+                    Show or hide {{ item.label }} in the sidebar
+                  </p>
+                </div>
+                <USwitch
+                  :model-value="navItemVisible(item.path).value"
+                  color="primary"
+                  checked-icon="i-lucide-eye"
+                  unchecked-icon="i-lucide-eye-off"
+                  size="xl"
+                  :aria-label="`Toggle ${item.label}`"
+                  @update:model-value="(v: boolean) => navItemVisible(item.path).value = v"
+                />
+              </div>
             </div>
             <div class="flex items-center justify-between">
               <div>

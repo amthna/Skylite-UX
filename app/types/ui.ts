@@ -120,7 +120,28 @@ export type ClientPreferences = {
   todoSortBy?: TodoSortMode;
   defaultView?: string;
   calendarView?: CalendarView;
+  /** Paths of nav items hidden from the sidebar and dock. */
+  hiddenNavItems?: string[];
 };
+
+/**
+ * Single source of truth for the nav, shared by the sidebar, the dock and the
+ * settings toggles. `alwaysVisible` keeps Settings reachable - hiding it would
+ * leave no way back to re-enable anything.
+ */
+export const NAV_ITEMS: {
+  path: string;
+  label: string;
+  icon: string;
+  alwaysVisible?: boolean;
+}[] = [
+  { path: "/calendar", label: "Calendar", icon: "i-lucide-calendar-days" },
+  { path: "/toDoLists", label: "Todo Lists", icon: "i-lucide-list-todo" },
+  { path: "/shoppingLists", label: "Shopping Lists", icon: "i-lucide-shopping-cart" },
+  { path: "/mealPlanner", label: "Meal Planner", icon: "i-lucide-utensils" },
+  { path: "/budget", label: "Budget", icon: "i-lucide-wallet" },
+  { path: "/settings", label: "Settings", icon: "i-lucide-settings", alwaysVisible: true },
+];
 
 export const MAIN_VIEW_OPTIONS: { path: string; label: string }[] = [
   { path: "/calendar", label: "Calendar" },
@@ -136,6 +157,7 @@ export const defaultClientPreferences: ClientPreferences = {
   todoSortBy: "date",
   defaultView: "/calendar",
   calendarView: "week",
+  hiddenNavItems: [],
 };
 
 export const TODO_SORT_OPTIONS: { value: TodoSortMode; label: string }[] = [
