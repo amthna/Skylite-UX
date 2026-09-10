@@ -120,10 +120,10 @@ function handleEventClick(event: CalendarEvent, e: MouseEvent) {
 
             <div
               v-show="getAllEventsForDay(events, day).length === 0"
-              class="flex flex-col items-center justify-center gap-1 text-muted flex-1"
+              class="flex flex-col items-center justify-center gap-1 text-dimmed opacity-40 flex-1"
             >
               <UIcon name="i-lucide-calendar-off" class="w-6 h-6" />
-              <span class="text-md text-muted">
+              <span class="text-md text-dimmed">
                 {{ isToday(day) ? "No events today" : "No events" }}
               </span>
             </div>
