@@ -79,8 +79,14 @@ export default defineEventHandler(async (event) => {
     });
 
     event.node.req.on("error", (err) => {
-      if (import.meta.dev && err.message?.includes("aborted")) {
-        consola.debug("Sync Events: Client disconnected (expected during dev)");
+      // An aborted request on an event stream is a client going away -- a
+      // closed tab, a reloaded dashboard, a proxy timing out an idle
+      // connection. That is not an error in production any more than it is
+      // in dev, and logging a stack trace for each one buries the failures
+      // that do matter: this was emitting one every five minutes, roughly
+      // 288 a day, because the display reconnects on that cycle.
+      if (err.message?.includes("aborted")) {
+        consola.debug("Sync Events: Client disconnected");
       }
       else {
         consola.error("Sync Events: Error in sync stream connection:", err);
