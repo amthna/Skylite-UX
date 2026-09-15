@@ -11,6 +11,9 @@ export default defineNuxtConfig({
     budgetApiUrl: "", // NUXT_BUDGET_API_URL
     budgetApiKey: "", // NUXT_BUDGET_API_KEY
     budgetSyncId: "", // NUXT_BUDGET_SYNC_ID
+    // Where the NAS scans leave films.json and concerts.json, mounted
+    // read-only into this container.
+    discoverDir: "/data/discover", // NUXT_DISCOVER_DIR
     public: {
       budgetCategory: "Groceries", // NUXT_PUBLIC_BUDGET_CATEGORY
       // The handful of categories offered as one-tap buttons on the

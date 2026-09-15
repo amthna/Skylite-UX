@@ -14,6 +14,15 @@ import { useIntegrations } from "~/composables/useIntegrations";
 import { integrationRegistry } from "~/types/integrations";
 
 const { allEvents, getEventUserColors } = useCalendar();
+const { discoverEvents, isFiltering } = useDiscoverEvents();
+
+// With a pill on, the calendar shows that category alone. Merging would
+// answer a question nobody asked -- the pill is a filter, not an overlay.
+const visibleEvents = computed(() =>
+  isFiltering.value
+    ? discoverEvents.value
+    : (allEvents.value as CalendarEvent[]),
+);
 const { showError, showSuccess } = useAlertToast();
 const { addCalendarEvent, updateCalendarEvent, getCalendarAccessRole }
   = useCalendarIntegrations();
@@ -844,8 +853,9 @@ function getEventIntegrationCapabilities(
 
 <template>
   <div>
+    <CalendarDiscoverPills />
     <CalendarMainView
-      :events="allEvents as CalendarEvent[]"
+      :events="visibleEvents"
       :initial-view="initialCalendarView"
       class="h-[calc(100vh-2rem)]"
       :get-integration-capabilities="getEventIntegrationCapabilities"

@@ -26,6 +26,11 @@ export type CalendarEvent = {
   ical_event?: ICalEvent;
   integrationId?: string;
   calendarId?: string;
+  // Set only on events the discover feeds supply (films, live music), so
+  // the calendar pills can filter without touching real calendar events.
+  category?: "film" | "live-music";
+  venue?: string;
+  link?: string;
   sourceCalendars?: SourceCalendar[];
   users?: Array<{
     id: string;
