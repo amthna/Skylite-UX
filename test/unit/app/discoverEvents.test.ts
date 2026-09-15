@@ -59,6 +59,24 @@ describe("toCalendarEvent", () => {
   });
 });
 
+describe("colour by kind", () => {
+  it("gives a Trylon showing its own colour", () => {
+    expect(toCalendarEvent(showtime).color).toBe("#b8562f");
+  });
+
+  it("keeps new releases on the film colour", () => {
+    expect(toCalendarEvent(premiere).color).toBe("#7a4bd0");
+  });
+
+  it("so the two are distinguishable on the same day", () => {
+    expect(toCalendarEvent(showtime).color).not.toBe(toCalendarEvent(premiere).color);
+  });
+
+  it("leaves live music alone", () => {
+    expect(toCalendarEvent(concert).color).toBe("#0d7d72");
+  });
+});
+
 describe("eventsInRange", () => {
   const events: CalendarEvent[] = [showtime, premiere, concert].map(toCalendarEvent);
 

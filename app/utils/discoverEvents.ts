@@ -20,6 +20,22 @@ export const DISCOVER_COLORS: Record<DiscoverCategory, string> = {
 };
 
 /**
+ * Repertory and premiere are different things on the same row -- a 35mm
+ * revival at the Trylon tonight versus a film opening nationally in three
+ * weeks -- so they get their own colours rather than sharing the film one.
+ */
+export const FILM_KIND_COLORS: Record<string, string> = {
+  repertory: "#b8562f", // Trylon: warm, like the marquee
+  premiere: "#7a4bd0", // new releases: keeps the original film colour
+};
+
+export function discoverColor(e: Pick<DiscoverEvent, "category" | "kind">): string {
+  if (e.category === "film" && e.kind && FILM_KIND_COLORS[e.kind])
+    return FILM_KIND_COLORS[e.kind]!;
+  return DISCOVER_COLORS[e.category];
+}
+
+/**
  * A feed entry as a calendar event.
  *
  * A showtime becomes a one-hour block; a release date carries no time and
@@ -38,7 +54,7 @@ export function toCalendarEvent(e: DiscoverEvent): CalendarEvent {
     start,
     end,
     allDay: !hasTime,
-    color: DISCOVER_COLORS[e.category],
+    color: discoverColor(e),
     location: e.venue,
     category: e.category,
     venue: e.venue,
