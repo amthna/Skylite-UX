@@ -13,6 +13,10 @@ export default defineNuxtConfig({
     budgetSyncId: "", // NUXT_BUDGET_SYNC_ID
     public: {
       budgetCategory: "Groceries", // NUXT_PUBLIC_BUDGET_CATEGORY
+      // The handful of categories offered as one-tap buttons on the
+      // register. Anything else is reachable from the full list, so this is
+      // about which ones are worth a thumb rather than which exist.
+      budgetQuickCategories: "Grocery,Eating out,Auto/gas,Household supplies,Kids activities,Alcohol,Clothing,Medical", // NUXT_PUBLIC_BUDGET_QUICK_CATEGORIES
       // Weather shown in the calendar header. Defaults to Minneapolis.
       weatherLatitude: "44.9778", // NUXT_PUBLIC_WEATHER_LATITUDE
       weatherLongitude: "-93.2650", // NUXT_PUBLIC_WEATHER_LONGITUDE
