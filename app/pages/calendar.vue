@@ -14,6 +14,7 @@ import { useIntegrations } from "~/composables/useIntegrations";
 import { integrationRegistry } from "~/types/integrations";
 
 const { allEvents, getEventUserColors } = useCalendar();
+useDiscoverFeed();
 const { discoverEvents, isFiltering } = useDiscoverEvents();
 
 // With a pill on, the calendar shows that category alone. Merging would
