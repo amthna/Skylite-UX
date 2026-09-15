@@ -8,6 +8,7 @@ const props = withDefaults(defineProps<GlobalFloatingActionButtonProps>(), {
   size: "lg",
   position: "bottom-right",
   disabled: false,
+  variant: "solid",
 });
 
 const emit = defineEmits<{
@@ -22,6 +23,12 @@ const positionClasses = computed(() => {
     // Sits one button-height above bottom-right, for a secondary action.
     case "bottom-right-stacked":
       return `${baseClasses} bottom-24 right-6`;
+    // Each further step is one button height (3.5rem) plus the same 1rem
+    // gap the first two use, so the column stays evenly spaced.
+    case "bottom-right-stacked-2":
+      return `${baseClasses} bottom-[10.5rem] right-6`;
+    case "bottom-right-stacked-3":
+      return `${baseClasses} bottom-[15rem] right-6`;
     case "bottom-left":
       return `${baseClasses} bottom-6 left-6`;
     case "top-right":
@@ -69,6 +76,7 @@ function handleClick() {
   <UButton
     :class="[positionClasses, sizeClasses]"
     :color="color"
+    :variant="variant"
     :disabled="disabled"
     :aria-label="label"
     class="p-0"

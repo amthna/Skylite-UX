@@ -69,7 +69,15 @@ export type GlobalFloatingActionButtonProps = {
   label?: string;
   color?: "primary" | "secondary" | "success" | "warning" | "error";
   size?: "sm" | "md" | "lg";
-  position?: "bottom-right" | "bottom-right-stacked" | "bottom-left" | "top-right" | "top-left";
+  position?:
+    | "bottom-right"
+    | "bottom-right-stacked"
+    | "bottom-right-stacked-2"
+    | "bottom-right-stacked-3"
+    | "bottom-left"
+    | "top-right"
+    | "top-left";
+  variant?: "solid" | "outline" | "soft" | "ghost" | "subtle";
   disabled?: boolean;
 };
 

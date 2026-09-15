@@ -853,7 +853,6 @@ function getEventIntegrationCapabilities(
 
 <template>
   <div>
-    <CalendarDiscoverPills />
     <CalendarMainView
       :events="visibleEvents"
       :initial-view="initialCalendarView"

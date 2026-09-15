@@ -42,7 +42,8 @@ const emit = defineEmits<{
 }>();
 
 const { getStableDate, stableDate } = useStableDate();
-const { getEventsForDateRange, scrollToDate } = useCalendar();
+const { scrollToDate } = useCalendar();
+const { isActive: discoverIsActive, toggle: discoverToggle } = useDiscoverEvents();
 const { calendarIntegrations } = useCalendarIntegrations();
 const currentDate = useState<Date>("calendar-current-date", () =>
   getStableDate());
@@ -343,13 +344,23 @@ const filteredEvents = computed(() => {
   let end: Date;
   let events: CalendarEvent[];
 
+  // Every branch below used to call getEventsForDateRange(), which reads
+  // allEvents straight out of useCalendar() and ignores what was passed
+  // in -- props.events was only ever read by the unreachable `default`
+  // branch. So narrowing the list upstream had no effect at all: the
+  // films and live-music filters looked wired up and changed nothing.
+  // The range filter now runs over the prop, which is the only list the
+  // parent can actually control.
+  const inRange = (from: Date, to: Date) =>
+    eventsInRange(props.events, from, to);
+
   switch (view.value) {
     case "month": {
       start = new Date(now.getFullYear(), now.getMonth(), 1);
       start.setDate(start.getDate() - 7);
       end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
       end.setDate(end.getDate() + 7);
-      events = getEventsForDateRange(start, end);
+      events = inRange(start, end);
       break;
     }
     case "week": {
@@ -360,19 +371,19 @@ const filteredEvents = computed(() => {
       saturday.setDate(saturday.getDate() + 7);
       start = sunday;
       end = saturday;
-      events = getEventsForDateRange(start, end);
+      events = inRange(start, end);
       break;
     }
     case "day": {
       start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-      events = getEventsForDateRange(start, end);
+      events = inRange(start, end);
       break;
     }
     case "agenda": {
       start = addDays(now, -15);
       end = addDays(now, 15);
-      events = getEventsForDateRange(start, end);
+      events = inRange(start, end);
       break;
     }
     default:
@@ -443,6 +454,24 @@ function getDaysForAgenda(date: Date) {
       />
     </div>
   </div>
+  <GlobalFloatingActionButton
+    icon="i-lucide-clapperboard"
+    :label="discoverIsActive('film') ? 'Showing films only' : 'Show films'"
+    :color="discoverIsActive('film') ? 'primary' : 'secondary'"
+    :variant="discoverIsActive('film') ? 'solid' : 'subtle'"
+    size="lg"
+    position="bottom-right-stacked-3"
+    @click="discoverToggle('film')"
+  />
+  <GlobalFloatingActionButton
+    icon="i-lucide-music"
+    :label="discoverIsActive('live-music') ? 'Showing live music only' : 'Show live music'"
+    :color="discoverIsActive('live-music') ? 'primary' : 'secondary'"
+    :variant="discoverIsActive('live-music') ? 'solid' : 'subtle'"
+    size="lg"
+    position="bottom-right-stacked-2"
+    @click="discoverToggle('live-music')"
+  />
   <GlobalFloatingActionButton
     v-if="!isTodayVisible"
     icon="i-lucide-calendar-check"

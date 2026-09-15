@@ -1,28 +1,12 @@
 import type { CalendarEvent } from "~/types/calendar";
+import type { DiscoverCategory, DiscoverEvent } from "~/utils/discoverEvents";
 
-export type DiscoverCategory = "film" | "live-music";
-
-type DiscoverEvent = {
-  id: string;
-  title: string;
-  date: string;
-  time?: string;
-  venue?: string;
-  link?: string;
-  note?: string;
-  category: DiscoverCategory;
-  kind?: string;
-};
+import { toCalendarEvent } from "~/utils/discoverEvents";
 
 type DiscoverResponse = {
   events: DiscoverEvent[];
   generated: { films: string | null; concerts: string | null };
   failed: string[];
-};
-
-const COLORS: Record<DiscoverCategory, string> = {
-  "film": "#7a4bd0",
-  "live-music": "#0d7d72",
 };
 
 /**
@@ -43,29 +27,6 @@ export function useDiscoverEvents() {
       failed: [],
     }) },
   );
-
-  function toCalendarEvent(e: DiscoverEvent): CalendarEvent {
-    // A showtime becomes a one-hour block; a release date with no time is
-    // an all-day marker, which is what a premiere actually is.
-    const hasTime = Boolean(e.time);
-    const start = new Date(`${e.date}T${e.time || "00:00"}:00`);
-    const end = new Date(start.getTime() + (hasTime ? 60 : 0) * 60 * 1000);
-    return {
-      id: `discover-${e.id}`,
-      title: e.venue && e.category === "live-music"
-        ? `${e.title} — ${e.venue}`
-        : e.title,
-      description: [e.venue, e.note].filter(Boolean).join(" · "),
-      start,
-      end,
-      allDay: !hasTime,
-      color: COLORS[e.category],
-      location: e.venue,
-      category: e.category,
-      venue: e.venue,
-      link: e.link,
-    };
-  }
 
   const discoverEvents = computed<CalendarEvent[]>(() =>
     (data.value?.events || [])
