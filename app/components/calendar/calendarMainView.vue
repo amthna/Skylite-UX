@@ -454,7 +454,14 @@ function getDaysForAgenda(date: Date) {
       />
     </div>
   </div>
+  <!--
+    Keyed because these are four siblings of one component type and the
+    "jump to today" one is behind a v-if. Without keys Vue patches an
+    existing instance when that condition flips rather than mounting a new
+    one, and the button comes back wearing a neighbour's icon.
+  -->
   <GlobalFloatingActionButton
+    key="fab-films"
     icon="i-lucide-clapperboard"
     :label="discoverIsActive('film') ? 'Showing films only' : 'Show films'"
     :color="discoverIsActive('film') ? 'primary' : 'secondary'"
@@ -464,6 +471,7 @@ function getDaysForAgenda(date: Date) {
     @click="discoverToggle('film')"
   />
   <GlobalFloatingActionButton
+    key="fab-live-music"
     icon="i-lucide-music"
     :label="discoverIsActive('live-music') ? 'Showing live music only' : 'Show live music'"
     :color="discoverIsActive('live-music') ? 'primary' : 'secondary'"
@@ -474,6 +482,7 @@ function getDaysForAgenda(date: Date) {
   />
   <GlobalFloatingActionButton
     v-if="!isTodayVisible"
+    key="fab-today"
     icon="i-lucide-calendar-check"
     label="Jump to today"
     color="secondary"
@@ -482,6 +491,7 @@ function getDaysForAgenda(date: Date) {
     @click="handleToday"
   />
   <GlobalFloatingActionButton
+    key="fab-add-event"
     icon="i-lucide-plus"
     label="Add new event"
     color="primary"

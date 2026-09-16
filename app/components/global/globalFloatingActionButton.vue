@@ -8,7 +8,10 @@ const props = withDefaults(defineProps<GlobalFloatingActionButtonProps>(), {
   size: "lg",
   position: "bottom-right",
   disabled: false,
-  variant: "solid",
+  // Deliberately no default. Passing an explicit variant to every button
+  // would change how the existing ones render, and the only callers that
+  // need one are the filter toggles, which set it themselves.
+  variant: undefined,
 });
 
 const emit = defineEmits<{
@@ -76,7 +79,7 @@ function handleClick() {
   <UButton
     :class="[positionClasses, sizeClasses]"
     :color="color"
-    :variant="variant"
+    v-bind="variant ? { variant } : {}"
     :disabled="disabled"
     :aria-label="label"
     class="p-0"
