@@ -68,11 +68,11 @@ export default defineEventHandler(async (event) => {
   if (wanted)
     events = events.filter(e => e.category === wanted);
 
-  // Past dates are noise on a calendar the tablet leaves open for weeks.
-  const today = new Date().toISOString().slice(0, 10);
-  events = events
-    .filter(e => (e.date || "") >= today)
-    .sort((a, b) => (a.date + (a.time || "")).localeCompare(b.date + (b.time || "")));
+  // Past events are kept. A calendar is a record as much as a plan, and
+  // filtering them here hid showings the scans had actually captured --
+  // "what did I miss last week" is a fair thing to ask of it.
+  events = events.sort((a, b) =>
+    (a.date + (a.time || "")).localeCompare(b.date + (b.time || "")));
 
   return {
     events,
