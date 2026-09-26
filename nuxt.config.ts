@@ -16,6 +16,11 @@ export default defineNuxtConfig({
     discoverDir: "/data/discover", // NUXT_DISCOVER_DIR
     public: {
       budgetCategory: "Groceries", // NUXT_PUBLIC_BUDGET_CATEGORY
+      // The category whose trip COUNT is worth watching, not just its total.
+      budgetTripCategory: "Grocery", // NUXT_PUBLIC_BUDGET_TRIP_CATEGORY
+      // Opening size of the family loan, in dollars, so the payoff bar has a
+      // denominator. The balance itself comes from the account.
+      budgetLoanOriginal: "0", // NUXT_PUBLIC_BUDGET_LOAN_ORIGINAL
       // The handful of categories offered as one-tap buttons on the
       // register. Anything else is reachable from the full list, so this is
       // about which ones are worth a thumb rather than which exist.
