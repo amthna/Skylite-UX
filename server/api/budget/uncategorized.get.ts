@@ -95,8 +95,12 @@ export default defineEventHandler(async (event) => {
         date: t.date,
         amount: t.amount,
         // imported_payee is the raw bank string and is the more recognisable
-        // of the two when a payee has been renamed to something tidy.
-        vendor: t.imported_payee || payeeName.get(t.payee ?? "") || "Unknown",
+        // of the two when a payee has been renamed to something tidy. Notes
+        // comes last but matters: this feed routinely delivers an empty
+        // payee with the merchant in notes ("BKOFAMERICA ATM", "14 HILL"),
+        // and a row labelled "Unknown" is one nobody can categorise.
+        vendor: t.imported_payee || payeeName.get(t.payee ?? "")
+          || t.notes || "Unknown",
         account: accountName.get(t.account ?? "") ?? "",
         notes: t.notes ?? "",
       }));
