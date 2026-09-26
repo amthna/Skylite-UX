@@ -25,7 +25,7 @@ type ActualTransaction = {
   notes: string | null;
 };
 
-type Named = { id: string; name: string };
+type Named = { id: string; name: string; offbudget?: boolean; closed?: boolean };
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
@@ -76,11 +76,18 @@ export default defineEventHandler(async (event) => {
 
     const payeeName = new Map(payees.data.map(p => [p.id, p.name]));
     const accountName = new Map(accounts.data.map(a => [a.id, a.name]));
+    // An off-budget account is tracked, not budgeted, so its rows never need
+    // a category -- the family loan's opening balance was sitting in this
+    // list as a -$14,500 item nobody could do anything about.
+    const offBudget = new Set(
+      accounts.data.filter(a => a.offbudget).map(a => a.id),
+    );
 
     const needsCategory = (result.data ?? [])
       .filter(t => !t.category)
       .filter(t => !t.transfer_id) // a transfer has no category by design
       .filter(t => !t.is_parent) // the split's children carry the categories
+      .filter(t => !offBudget.has(t.account ?? "")) // tracked, not budgeted
       .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""))
       .slice(0, limit)
       .map(t => ({
