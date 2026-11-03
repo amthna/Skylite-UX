@@ -166,7 +166,7 @@ const monthTitle = computed(() => {
       </div>
 
       <!-- Tap a segment to see the charges behind it. -->
-      <div class="relative flex h-5 w-full overflow-hidden rounded-full bg-elevated">
+      <div class="relative flex h-10 w-full overflow-hidden rounded-full bg-elevated">
         <button
           type="button"
           class="h-full transition-all"
