@@ -18,6 +18,11 @@ export default defineNuxtConfig({
       budgetCategory: "Groceries", // NUXT_PUBLIC_BUDGET_CATEGORY
       // The category whose trip COUNT is worth watching, not just its total.
       budgetTripCategory: "Grocery", // NUXT_PUBLIC_BUDGET_TRIP_CATEGORY
+      // The two categories that make up food. The weekly bar splits them, and
+      // the weekly cap is the household target that the month is built from.
+      budgetGroceryCategory: "Grocery", // NUXT_PUBLIC_BUDGET_GROCERY_CATEGORY
+      budgetDiningCategory: "Eating out", // NUXT_PUBLIC_BUDGET_DINING_CATEGORY
+      budgetWeeklyCap: "350", // NUXT_PUBLIC_BUDGET_WEEKLY_CAP
       // Opening size of the family loan, in dollars, so the payoff bar has a
       // denominator. The balance itself comes from the account.
       budgetLoanOriginal: "0", // NUXT_PUBLIC_BUDGET_LOAN_ORIGINAL

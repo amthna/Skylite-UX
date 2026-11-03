@@ -112,8 +112,8 @@ const loanPct = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col min-h-0 items-center justify-center p-5">
-    <div v-if="error" class="flex flex-col items-center gap-2 text-dimmed">
+  <div class="flex flex-1 flex-col min-h-0 overflow-y-auto p-5">
+    <div v-if="error" class="m-auto flex flex-col items-center gap-2 text-dimmed">
       <UIcon name="i-lucide-plug-zap" class="w-8 h-8" />
       <p class="text-lg">
         Can't reach the budget
@@ -123,11 +123,11 @@ const loanPct = computed(() => {
       </p>
     </div>
 
-    <div v-else-if="!data" class="text-dimmed text-lg">
+    <div v-else-if="!data" class="m-auto text-dimmed text-lg">
       Loading budget...
     </div>
 
-    <div v-else class="flex w-full max-w-2xl flex-col gap-7">
+    <div v-else class="m-auto flex w-full max-w-2xl flex-col gap-7">
       <!--
         The headline is what is LEFT, not what is gone. The decision this
         display exists to inform happens in a shop, and "spent so far" is no
@@ -231,6 +231,10 @@ const loanPct = computed(() => {
           </div>
         </div>
       </div>
+
+      <!-- Food, by week and by month, with the charges behind each total. -->
+      <hr class="border-default">
+      <BudgetSpending />
 
       <p v-if="data.missing.length" class="text-center text-sm text-dimmed">
         Not in this month's budget: {{ data.missing.join(", ") }}
