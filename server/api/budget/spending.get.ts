@@ -85,8 +85,21 @@ export default defineEventHandler(async () => {
 
     // The month's budgeted amounts are the monthly cap, so the budget and this
     // view can never disagree about what the month allows.
-    const current = await api<ActualMonth>(`/months/${monthKey(now)}`);
-    const monthCap = budgetedFor(current, groceryName) + budgetedFor(current, diningName);
+    // A month nobody has budgeted yet has no cap, which would make the bar
+    // read "$0 of $0". Fall back to the last budgeted month, and say so in the
+    // response, so the view can label the number as carried over.
+    const capFor = async (d: Date) => {
+      const m = await api<ActualMonth>(`/months/${monthKey(d)}`);
+      return budgetedFor(m, groceryName) + budgetedFor(m, diningName);
+    };
+    let monthCap = await capFor(now);
+    let capFrom: string | null = null;
+    if (monthCap <= 0) {
+      const prior = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      monthCap = await capFor(prior);
+      if (monthCap > 0)
+        capFrom = monthKey(prior);
+    }
 
     const accounts = await api<{ data?: Account[] }>("/accounts");
     const open = (accounts.data ?? []).filter(a => !a.closed && !a.offbudget);
@@ -145,6 +158,8 @@ export default defineEventHandler(async () => {
         daysElapsed: now.getDate(),
         daysInMonth: new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(),
         cap: monthCap,
+        // Set when this month has no budget of its own yet.
+        capFrom,
         grocery: sum(rows, "grocery"),
         dining: sum(rows, "dining"),
         rows,

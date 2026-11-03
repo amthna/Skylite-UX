@@ -13,7 +13,7 @@ type Period = {
 };
 type Spending = {
   week: Period & { start: string; end: string; daysElapsed: number };
-  month: Period & { label: string; daysElapsed: number; daysInMonth: number };
+  month: Period & { label: string; daysElapsed: number; daysInMonth: number; capFrom: string | null };
 };
 
 const { data, error, refresh } = await useFetch<Spending>("/api/budget/spending", {
@@ -128,6 +128,10 @@ const weekTitle = computed(() => {
   return `Week of ${s.toLocaleDateString("en-US", { month: "short", day: "numeric" })} – ${e.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
 });
 
+function monthNameOf(key: string): string {
+  return new Date(`${key}-01T00:00:00`).toLocaleString("default", { month: "long" });
+}
+
 const monthTitle = computed(() => {
   if (!data.value)
     return "";
@@ -180,6 +184,13 @@ const monthTitle = computed(() => {
           @click="toggle(`${view.prefix}:dining`)"
         />
       </div>
+
+      <p
+        v-if="view.prefix === 'month' && data.month.capFrom"
+        class="text-sm text-dimmed"
+      >
+        Cap carried over from {{ monthNameOf(data.month.capFrom) }}; set this month's budget in Actual to replace it.
+      </p>
 
       <div class="flex flex-wrap justify-between gap-x-4 gap-y-1 text-sm tabular-nums">
         <button
