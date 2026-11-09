@@ -81,6 +81,23 @@ function tone(spent: number, cap: number, pace: number | null): string | null {
   return null;
 }
 
+// The bar is one click target: a tap picks the segment under it. Empty
+// buttons with percentage widths were not reliably tappable on the Silk
+// WebView the wall tablet runs, so the handler lives on the bar itself.
+function onBarClick(e: MouseEvent, view: { prefix: string; groceryPct: number; diningPct: number }) {
+  const bar = e.currentTarget as HTMLElement;
+  const rect = bar.getBoundingClientRect();
+  if (rect.width <= 0)
+    return;
+  const pct = ((e.clientX - rect.left) / rect.width) * 100;
+  if (pct < 0 || pct > 100)
+    return;
+  if (pct <= view.groceryPct)
+    toggle(`${view.prefix}:grocery`);
+  else if (pct <= view.groceryPct + view.diningPct)
+    toggle(`${view.prefix}:dining`);
+}
+
 function build(key: "week" | "month", period: Period, daysFraction: number | null) {
   const total = period.grocery + period.dining;
   const cap = period.cap;
@@ -166,23 +183,21 @@ const monthTitle = computed(() => {
       </div>
 
       <!-- Tap a segment to see the charges behind it. -->
-      <div class="relative flex h-10 w-full overflow-hidden rounded-full bg-elevated">
+      <div class="relative flex h-10 w-full cursor-pointer overflow-hidden rounded-full bg-elevated" @click="onBarClick($event, view)">
         <button
           type="button"
           class="h-full transition-all"
           :style="{ width: `${view.groceryPct}%`, background: COLOR.grocery }"
           :aria-expanded="open === `${view.prefix}:grocery`"
           :aria-label="`${LABEL.grocery} ${dollars(view.grocery)}`"
-          @click="toggle(`${view.prefix}:grocery`)"
-        />
+                  />
         <button
           type="button"
           class="h-full transition-all"
           :style="{ width: `${view.diningPct}%`, background: COLOR.dining }"
           :aria-expanded="open === `${view.prefix}:dining`"
           :aria-label="`${LABEL.dining} ${dollars(view.dining)}`"
-          @click="toggle(`${view.prefix}:dining`)"
-        />
+                  />
       </div>
 
       <p
