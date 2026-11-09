@@ -237,7 +237,7 @@ const monthTitle = computed(() => {
       <!-- The charges behind whichever segment was tapped. -->
       <ul
         v-for="bucket in (['grocery', 'dining'] as Bucket[])"
-        v-show="open === `${view.prefix}:${bucket}`"
+        v-if="open === `${view.prefix}:${bucket}`"
         :key="`${view.prefix}-${bucket}-list`"
         class="flex flex-col divide-y divide-default rounded-lg border border-default"
       >
