@@ -235,10 +235,10 @@ const monthTitle = computed(() => {
       </div>
 
       <!-- The charges behind whichever segment was tapped. -->
+      <!-- v-if and v-for cannot share an element: v-if would run first, without the bucket in scope. -->
+      <template v-for="bucket in (['grocery', 'dining'] as Bucket[])" :key="`${view.prefix}-${bucket}-list`">
       <ul
-        v-for="bucket in (['grocery', 'dining'] as Bucket[])"
         v-if="open === `${view.prefix}:${bucket}`"
-        :key="`${view.prefix}-${bucket}-list`"
         class="flex flex-col divide-y divide-default rounded-lg border border-default"
       >
         <li class="px-4 py-2 text-sm uppercase tracking-wide text-dimmed">
@@ -264,6 +264,7 @@ const monthTitle = computed(() => {
           Nothing yet.
         </li>
       </ul>
+      </template>
     </div>
   </div>
 
